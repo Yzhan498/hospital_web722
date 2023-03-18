@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/database/database_helper.dart';
 import 'package:mobileweb_hospitalapp/screens/listRecord.dart';
 
+import '../Model/UserModel.dart';
 import 'addRecord.dart';
 
 class ListRecord extends StatefulWidget {
@@ -23,34 +24,80 @@ class _ListRecordState extends State<ListRecord> {
         title: const Text('List Record'),
       ),
       body: Center(
-        child: ListView(
+        child: FutureBuilder<List<UserModel>>(
+            future: DatabaseHelper.instance.getGroceries(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<UserModel>> snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: Text('Loading...'));
+              }
+              return snapshot.data!.isEmpty
+                  ? const Center(child: Text('No Groceries in List.'))
+                  :ListView(
+                children: snapshot.data!.map((user) {
+                  return Center(
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Name:John',
+                          style: TextStyle(
+                            fontSize: 26,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 4,
+                          margin: const EdgeInsets.all(10),
+                          child: Column(children: [
 
-          children: [
-            _tile('Name', 'John',Icons.person),
-            _tile('Heart Heat Beat', '135/min',Icons.heart_broken),
-            _tile('Oxygen Level', '120/80 ml', Icons.hearing),
-            _tile('Respire Rate', '25/min',Icons.air),
-            _tile('Blood Pressure', '10/8O', Icons.bloodtype),
-            Container(
-              margin: const EdgeInsets.all(30.0),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              child: FilledButton(
-                child: const Text(
-                  'Add Record',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder:(_) => const AddRecord(title: 'AddRecord',)));
-                },
-              ),
-            ),
-          ],
-        ),
+                            Column(
+                              children: [
+                                  _tile('Time', '10:30',Icons.date_range),
+                                  _tile('Heart Heat Beat', '135/min',Icons.heart_broken),
+                                  _tile('Oxygen Level', '120/80 ml', Icons.hearing),
+                                  _tile('Respire Rate', '25/min',Icons.air),
+                                  _tile('Blood Pressure', '10/8O', Icons.bloodtype),
+                              ],
+                            )
+                          ]),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              );
+            }),
+        // child: ListView(
+
+          // children: [
+          //   _tile('Name', 'John',Icons.person),
+          //   _tile('Heart Heat Beat', '135/min',Icons.heart_broken),
+          //   _tile('Oxygen Level', '120/80 ml', Icons.hearing),
+          //   _tile('Respire Rate', '25/min',Icons.air),
+          //   _tile('Blood Pressure', '10/8O', Icons.bloodtype),
+          //   Container(
+          //     margin: const EdgeInsets.all(30.0),
+          //     width: double.infinity,
+          //     decoration: BoxDecoration(
+          //       color: Colors.blue,
+          //       borderRadius: BorderRadius.circular(30.0),
+          //     ),
+          //     child: FilledButton(
+          //       child: const Text(
+          //         'Add Record',
+          //         style: TextStyle(color: Colors.white),
+          //       ),
+          //       onPressed: () {
+          //         Navigator.push(context,
+          //             MaterialPageRoute(builder:(_) => const AddRecord(title: 'AddRecord',)));
+          //       },
+          //     ),
+          //   ),
+          // ],
+        // ),
 
       ),
 

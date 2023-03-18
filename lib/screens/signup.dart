@@ -1,60 +1,68 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:mobileweb_hospitalapp/screens/login.dart';
-import 'package:mobileweb_hospitalapp/database/database_helper.dart';
+import '../screens/login.dart';
 import 'package:email_validator/email_validator.dart';
 import '../comm/comHelper.dart';
 import 'dart:core';
+import '../database/database_helper.dart';
+import '../Model/UserModel.dart';
 
-
+void signup() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp( const Signup(title: "WeCare"));
+}
 class Signup extends StatefulWidget {
+
   const Signup({super.key,required this.title});
 
   final String title;
+
 @override
 State<Signup> createState() => _SignupState();
+
 }
 
+
+
+
 class _SignupState extends State<Signup>{
+  final _formKey= GlobalKey<FormState>();
   int? selectedId;
-  final _formKey=GlobalKey<FormState>();
   final textControllerName = TextEditingController();
   final textControllerEmail = TextEditingController();
   final textControllerPassword = TextEditingController();
   final textControllerComPassword = TextEditingController();
+  var dbHelper;
 
+  @override
+  void initState(){
+    super.initState();
+    dbHelper= DatabaseHelper.instance;
+  }
   signUp(){
-
-    if(textControllerName.text.isEmpty){
-      alertDialog(context,"Please Enter User Name");
-    }else if(textControllerEmail.text.isEmpty){
-      alertDialog(context, "Please Enter Email");
-      if(EmailValidator.validate(textControllerEmail.text)==false){
-        alertDialog(context, "Please Enter Correct Email");
-      }
-    }else if(textControllerPassword.text.isEmpty){
-      alertDialog(context, "Please Enter Password");
-    }else if(textControllerComPassword.text.isEmpty){
-      alertDialog(context, "Please Enter Confirm Password");
-      if(textControllerComPassword.text!=textControllerPassword.text)
-        {
-          alertDialog(context, "Please Enter Same Password!");
+    final form=_formKey.currentState;
+    if(form?.validate()==true){
+        if(textControllerPassword.text!=textControllerComPassword.text){
+          alertDialog(context, 'Please Type same password!');
+        }else {
+          _formKey.currentState?.save();
+          UserModel  uModel= UserModel (name: textControllerName.text, email: textControllerEmail.text, password: textControllerPassword.text);
+          dbHelper.add(uModel);
+          alertDialog(context, 'Successfully Saved');
         }
-    }else {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const Login(title: 'Login')),
-              (Route<dynamic> route) => false);
     }
   }
   @override
   Widget build(BuildContext context) {
-
+    WidgetsFlutterBinding.ensureInitialized();
     return Scaffold(
+
       appBar: AppBar(
         title: const Text('Sign Up'),
       ),
       body: Form(
-        key:_formKey,
+        key: _formKey,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Center(
@@ -68,7 +76,7 @@ class _SignupState extends State<Signup>{
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
-                    validator: (val) => val?.isEmpty== true ? 'Please Enter Your Name':null,
+                    validator: (val) => val?.isEmpty == true? 'Please Enter Your Name':null,
                     onSaved: (val)=> textControllerName.text=val!,
                     controller: textControllerName,
                     decoration: const InputDecoration(
@@ -86,6 +94,17 @@ class _SignupState extends State<Signup>{
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
+                    validator: (val) {
+    if(val== null || val.isEmpty) {
+    return 'Please Enter Your Email';
+    }
+    if(!EmailValidator.validate(textControllerEmail.text)){
+    return 'Please Enter Your Valid Email';
+    }
+    return null;
+    },
+                    onSaved: (val)=> textControllerEmail.text=val!,
+
                     keyboardType: TextInputType.emailAddress,
                     controller: textControllerEmail,
                     decoration: const InputDecoration(
@@ -104,6 +123,8 @@ class _SignupState extends State<Signup>{
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
+                    validator: (val) => val?.isEmpty == true? 'Please Enter Your Password':null,
+                    onSaved: (val)=> textControllerPassword.text=val!,
                     controller: textControllerPassword,
                     obscureText: true,
                     decoration: const InputDecoration(
@@ -120,6 +141,8 @@ class _SignupState extends State<Signup>{
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
+                    validator: (val) => val?.isEmpty == true? 'Please Enter Your Confirm Password':null,
+                    onSaved: (val)=> textControllerComPassword.text=val!,
                     controller: textControllerComPassword,
                     obscureText: true,
                     decoration: const InputDecoration(
@@ -145,8 +168,22 @@ class _SignupState extends State<Signup>{
                       'Sign Up',
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () {
+                    onPressed: () async{
                       signUp();
+                        selectedId != null
+                            ? await DatabaseHelper.instance.update(
+                          UserModel(id: selectedId, name: textControllerName.text,email: textControllerEmail.text,password: textControllerPassword.text ),
+                        )
+                            : await DatabaseHelper.instance.add(
+                          UserModel(name: textControllerName.text,email: textControllerEmail.text,password: textControllerPassword.text ),
+                        );
+                        setState(() {
+                          textControllerName.clear();
+                          textControllerPassword.clear();
+                          textControllerEmail.clear();
+                          textControllerComPassword.clear();
+                          selectedId = null;
+                        });
 
                       },
                   ),

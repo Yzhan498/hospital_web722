@@ -14,3 +14,6 @@ fontSize: 16.0
 );
 }
 
+// valideateEmail(){
+//   final ReqExp emailReg= new RegExp(source)
+// }

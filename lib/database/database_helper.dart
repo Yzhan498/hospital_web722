@@ -3,16 +3,24 @@ import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import '../Model/UserModel.dart';
 
 class DatabaseHelper {
-  DatabaseHelper._privateConstructor();
-  static final DatabaseHelper instance= DatabaseHelper._privateConstructor();
-  static Database? _database;
-  Future<Database> get database async => _database ??= await _initDatabase();
 
-  Future<Database> _initDatabase() async {
+  DatabaseHelper._privateConstructor();
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+
+  static Database? _database;
+  Future<Database?> get database async {
+    if (_database != null) {
+      return _database;
+    }
+    _database = await initDatabase();
+    return _database;
+  }
+ initDatabase() async {
     Directory documentDirectory =await getApplicationDocumentsDirectory();
-    String path= join(documentDirectory.path, 'users.db');
+    String path= join(documentDirectory.path, 'information.db');
     return await openDatabase(
       path,
       version: 1,
@@ -20,11 +28,11 @@ class DatabaseHelper {
     );
   }
 
-  Future _onCreate(Database db, int version) async {
-    await db.execute('''
-    CREATE TABLE users(
+ _onCreate(Database database, int version) async {
+    await database.execute('''
+    CREATE TABLE user(
     id INTEGER PRIMARY KEY,
-    name TEXT,
+    name  TEXT,
     email TEXT,
     password TEXT
     )
@@ -32,52 +40,36 @@ class DatabaseHelper {
   }
 
 
-  Future<int> add(Users user) async {
-    Database db = await instance.database;
-    return await db.insert('users', user.toMap());
+
+  Future<int?> add(UserModel user) async {
+    Database? db = await instance.database;
+    return await db?.insert('user', user.toMap());
+  }
+
+  Future<int?> update(UserModel grocery) async {
+    Database? db = await instance.database;
+    return await db?.update('user', grocery.toMap(),
+        where: "id = ?", whereArgs: [grocery.id]);
   }
 
 
-  Future<int> update(Users user) async {
-    Database db = await instance.database;
-    return await db.update('users', user.toMap(),
-        where: "id = ?", whereArgs: [user.id]);
-  }
-
-  Future<Users?> getLoginUser(String name,String password) async {
-    var dbClint=await database;
-    var res=await dbClint.rawQuery("SELECT * FROM users WHERE"
-    "name='name' AND"
+  Future<UserModel?> getLoginUser(String name,String password) async {
+    var dbClient=await database;
+    var res= await dbClient?.rawQuery("SELECT * FROM user WHERE "
+    "name='name' AND "
     "password='password'");
-    if(res.isNotEmpty){
-      return Users.fromMap(res.first);
+    if(res!.isNotEmpty){
+      return UserModel.fromMap(res.first);
     }
     return null;
   }
-  
-}
-class Users {
-  final int? id;
-  final String name;
-  final String email;
-  final String password;
 
-
-  Users({this.id,required this.name,required this.email,required this.password});
-
-  factory Users.fromMap(Map<String, dynamic> json) => Users(
-    id: json['id'],
-    name: json['name'],
-    email: json['email'],
-    password: json['password'],
-  );
-
-  Map<String,dynamic> toMap() {
-    return{
-      'id':id,
-      'name':name,
-      'email':email,
-      'password':password,
-    };
+  Future<List<UserModel>> getGroceries() async {
+    Database? db = await instance.database;
+    var groceries = await db?.query('user', orderBy: 'name');
+    List<UserModel> groceryList = groceries!.isNotEmpty
+        ? groceries.map((c) => UserModel.fromMap(c)).toList()
+        : [];
+    return groceryList;
   }
 }
