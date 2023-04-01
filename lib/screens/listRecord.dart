@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/database/database_helper.dart';
 import 'package:mobileweb_hospitalapp/screens/listRecord.dart';
 
-import '../Model/UserModel.dart';
+import '../Model/PatientModel.dart';
+import '../Model/RecordModel.dart';
+import '../database/record_database_helper.dart';
 import 'addRecord.dart';
 
 class ListRecord extends StatefulWidget {
@@ -24,10 +26,10 @@ class _ListRecordState extends State<ListRecord> {
         title: const Text('List Record'),
       ),
       body: Center(
-        child: FutureBuilder<List<UserModel>>(
-            future: DatabaseHelper.instance.getGroceries(),
+        child: FutureBuilder<List<RecordModel>>(
+            future: RecordDatabaseHelper.getRecords(),
             builder: (BuildContext context,
-                AsyncSnapshot<List<UserModel>> snapshot) {
+                AsyncSnapshot<List<RecordModel>> snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: Text('Loading...'));
               }
@@ -61,7 +63,26 @@ class _ListRecordState extends State<ListRecord> {
                                   _tile('Respire Rate', '25/min',Icons.air),
                                   _tile('Blood Pressure', '10/8O', Icons.bloodtype),
                               ],
-                            )
+                            ),
+
+                              Container(
+                                margin: const EdgeInsets.all(30.0),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                child: FilledButton(
+                                  child: const Text(
+                                    'Add Record',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder:(_) => const AddRecord(title: 'AddRecord',)));
+                                  },
+                                ),
+                              ),
                           ]),
                         ),
                       ],
@@ -69,6 +90,7 @@ class _ListRecordState extends State<ListRecord> {
                   );
                 }).toList(),
               );
+
             }),
         // child: ListView(
 

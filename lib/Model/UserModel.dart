@@ -1,25 +1,24 @@
 class UserModel {
-  final int? id;
-  final String name;
-final String email;
-final String password;
+  int ? id ;
+  String ? name;
+  String ? email;
+  String ? password;
 
-  UserModel({this.id,required this.name,required this.email,required this.password});
+  UserModel({this.id, this.name, this.email,this.password});
 
   Map<String,dynamic> toMap() {
-    var map=<String,dynamic>
-    {
-      'id':id,
-      'name':name,
-      'email':email,
-      'password':password,
-    };
+    var map = < String,dynamic >{};
+    map["id"] = id;
+    map["name"] = name;
+    map["email"] = email;
+    map["password"] = password;
     return map;
   }
-  factory UserModel.fromMap(Map<String, dynamic> json) => UserModel(
-    id: json['id'],
-    name: json['name'],
-    email: json['email'],
-    password: json['password'],
-  );
+
+  UserModel.fromMap(Map<dynamic, dynamic> map) {
+    id = map['id'];
+    name = map['name'];
+    email = map['email'];
+    password = map['password'];
+  }
 }

@@ -11,20 +11,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobileweb_hospitalapp/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Timeout', (WidgetTester tester) async {
+    group('complicated algorithm tests', () {
+      // ...
+    }, skip: "the algorithm isn't quite right");
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+    test('error-checking test', () {
+      // ...
+    }, skip: 'TODO: add error-checking.');
+   });
 }

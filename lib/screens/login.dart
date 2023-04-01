@@ -1,7 +1,7 @@
-import 'package:flutter/scheduler.dart';
-import '../database/database_helper.dart';
+
 import 'package:flutter/material.dart';
 import '../comm/comHelper.dart';
+import '../database/user_database_helper.dart';
 import 'signup.dart';
 import 'Home.dart';
 
@@ -16,41 +16,33 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-   final _formKey= GlobalKey<FormState>();
-   final textControllerName = TextEditingController();
-   final textControllerPassword = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final textControllerName = TextEditingController();
+  final textControllerPassword = TextEditingController();
 
-  login() async{
-     String uname=textControllerName.text;
-     String passwd=textControllerPassword.text;
-    if(uname.isEmpty){
+  login() async {
+    String uname = textControllerName.text;
+    String passwd = textControllerPassword.text;
+
+    if (uname.isEmpty) {
       alertDialog(context, "Please Enter User Name");
-    }else if(passwd.isEmpty){
+    } else if (passwd.isEmpty) {
       alertDialog(context, "Please Enter Password");
-    }else{
-      await DatabaseHelper.instance.getLoginUser(uname, passwd).then((userData){
-        if(userData==null) {
+    } else {
+      await UserDatabaseHelper.getLoginUser(uname, passwd).then((
+          userData) {
+        if (userData != null) {
           Navigator.pushAndRemoveUntil(context,
               MaterialPageRoute(builder: (_) => const Home(title: 'Home',)),
                   (Route<dynamic> route) => false);
-        }else{
+        } else {
           alertDialog(context, "Error:User Not found");
         }
-      }).catchError((error){
+      }).catchError((error) {
         alertDialog(context, "Error: Login Fail");
       });
     }
-    // if (textControllerName.text.isEmpty) {
-    //   alertDialog(context, "Please Enter User Name");
-    // } else if (textControllerPassword.text.isEmpty) {
-    //   alertDialog(context, "Please Enter Password");
-    // }else {
-    //   Navigator.pushAndRemoveUntil(context,
-    //       MaterialPageRoute(builder: (_) => const Home(title: 'Home',)),
-    //           (Route<dynamic> route) => false);
-    // }
   }
-
   @override
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized();

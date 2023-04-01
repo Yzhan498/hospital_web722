@@ -1,12 +1,10 @@
-
-
 import 'package:flutter/material.dart';
-import '../screens/login.dart';
+import '../Model/UserModel.dart';
 import 'package:email_validator/email_validator.dart';
 import '../comm/comHelper.dart';
 import 'dart:core';
-import '../database/database_helper.dart';
-import '../Model/UserModel.dart';
+import '../database/user_database_helper.dart';
+import 'Home.dart';
 
 void signup() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +18,6 @@ class Signup extends StatefulWidget {
 
 @override
 State<Signup> createState() => _SignupState();
-
 }
 
 
@@ -38,7 +35,7 @@ class _SignupState extends State<Signup>{
   @override
   void initState(){
     super.initState();
-    dbHelper= DatabaseHelper.instance;
+    dbHelper= UserDatabaseHelper;
   }
   signUp(){
     final form=_formKey.currentState;
@@ -48,8 +45,10 @@ class _SignupState extends State<Signup>{
         }else {
           _formKey.currentState?.save();
           UserModel  uModel= UserModel (name: textControllerName.text, email: textControllerEmail.text, password: textControllerPassword.text);
-          dbHelper.add(uModel);
+          UserDatabaseHelper.createUser(uModel);
           alertDialog(context, 'Successfully Saved');
+          Navigator.push(context,
+              MaterialPageRoute(builder:(_) => const Home(title: 'WeCare',)));
         }
     }
   }
@@ -168,24 +167,9 @@ class _SignupState extends State<Signup>{
                       'Sign Up',
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () async{
+                    onPressed: () async {
                       signUp();
-                        selectedId != null
-                            ? await DatabaseHelper.instance.update(
-                          UserModel(id: selectedId, name: textControllerName.text,email: textControllerEmail.text,password: textControllerPassword.text ),
-                        )
-                            : await DatabaseHelper.instance.add(
-                          UserModel(name: textControllerName.text,email: textControllerEmail.text,password: textControllerPassword.text ),
-                        );
-                        setState(() {
-                          textControllerName.clear();
-                          textControllerPassword.clear();
-                          textControllerEmail.clear();
-                          textControllerComPassword.clear();
-                          selectedId = null;
-                        });
-
-                      },
+                    }
                   ),
                 ),
               ],

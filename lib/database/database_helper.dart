@@ -1,75 +1,59 @@
-
-import 'dart:io';
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import '../Model/UserModel.dart';
+import 'package:sqflite/sqflite.dart';
+
 
 class DatabaseHelper {
+  static const _databaseName = "app.db";
+  static const _databaseVersion = 1;
 
-  DatabaseHelper._privateConstructor();
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  DatabaseHelper._internal();
+  static final DatabaseHelper databaseHelper = DatabaseHelper._internal();
+  static DatabaseHelper get instance => databaseHelper;
 
-  static Database? _database;
-  Future<Database?> get database async {
-    if (_database != null) {
-      return _database;
-    }
-    _database = await initDatabase();
+  static Database ? _database;
+
+  Future<Database ? > get database async {
+    if (_database != null) return _database;
+    _database = await _initDatabase();
     return _database;
   }
- initDatabase() async {
-    Directory documentDirectory =await getApplicationDocumentsDirectory();
-    String path= join(documentDirectory.path, 'information.db');
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate:_onCreate,
+
+  Future<Database> _initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    String path = join(dbPath, _databaseName);
+    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+  }
+
+  Future _onCreate(Database db, int version) async {
+    await db.execute(
+        "CREATE TABLE User("
+            "id INTEGER PRIMARY KEY, "
+            "name TEXT, "
+            "email TEXT, "
+            "password TEXT "
+            ")"
     );
-  }
-
- _onCreate(Database database, int version) async {
-    await database.execute('''
-    CREATE TABLE user(
-    id INTEGER PRIMARY KEY,
-    name  TEXT,
-    email TEXT,
-    password TEXT
-    )
-    ''');
-  }
-
-
-
-  Future<int?> add(UserModel user) async {
-    Database? db = await instance.database;
-    return await db?.insert('user', user.toMap());
-  }
-
-  Future<int?> update(UserModel grocery) async {
-    Database? db = await instance.database;
-    return await db?.update('user', grocery.toMap(),
-        where: "id = ?", whereArgs: [grocery.id]);
-  }
-
-
-  Future<UserModel?> getLoginUser(String name,String password) async {
-    var dbClient=await database;
-    var res= await dbClient?.rawQuery("SELECT * FROM user WHERE "
-    "name='name' AND "
-    "password='password'");
-    if(res!.isNotEmpty){
-      return UserModel.fromMap(res.first);
-    }
-    return null;
-  }
-
-  Future<List<UserModel>> getGroceries() async {
-    Database? db = await instance.database;
-    var groceries = await db?.query('user', orderBy: 'name');
-    List<UserModel> groceryList = groceries!.isNotEmpty
-        ? groceries.map((c) => UserModel.fromMap(c)).toList()
-        : [];
-    return groceryList;
+    await db.execute(
+        "CREATE TABLE patient("
+            "id INTEGER PRIMARY KEY,"
+            "name  TEXT , "
+            "email TEXT, "
+            "number TEXT, "
+            "bloodType TEXT, "
+            "age TEXT, "
+            "address TEXT, "
+            "doctorId TEXT "
+            ")"
+    );
+    await db.execute(
+        "CREATE TABLE patientRecord("
+            "recordId INTEGER PRIMARY KEY,"
+            "patientId Integer,"
+            "heartBeat  TEXT,"
+            "oxygenLevel TEXT,"
+            "respireRate TEXT,"
+            "bloodPressure TEXT"
+            ")"
+    );
   }
 }
