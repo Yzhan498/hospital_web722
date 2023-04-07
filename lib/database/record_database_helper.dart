@@ -3,7 +3,7 @@ import 'package:mobileweb_hospitalapp/Model/RecordModel.dart';
 import 'database_helper.dart';
 
 class RecordDatabaseHelper {
-  static String tableName = 'User';
+  static String tableName = 'patientRecord';
 
   static Future<void> createRecord(RecordModel record) async {
     var database = await DatabaseHelper.instance.database;
@@ -12,7 +12,7 @@ class RecordDatabaseHelper {
 
   static Future<List<RecordModel>> getRecords() async {
     var database = await DatabaseHelper.instance.database;
-    List<Map> list = await database!.rawQuery('SELECT * FROM $tableName');
+    List<Map> list = await database!.rawQuery('SELECT * FROM $tableName WHERE patientId = ?',['database.patient.id']);
 
     List<RecordModel> records = [];
 

@@ -44,12 +44,13 @@ class _ListPatientsState extends State<ListPatients> {
                       child: Column(children: [
                         Column(
                               children: [
-                                _tile('Name', 'John',Icons.person),
-                                _tile('Address', '429 Castro St', Icons.home),
-                                _tile('Age', '35',Icons.person),
-                                _tile('MobileNum', '4294546666', Icons.mobile_screen_share),
-                                _tile('Email', 'dd@hotmail.com',Icons.email),
-                                _tile('Blood Type', 'O', Icons.bloodtype),
+                                _tile('Name', user.name as String,Icons.person),
+                                _tile('Address', user.address as String, Icons.home),
+                                _tile('Age', user.age as String,Icons.person),
+                                _tile('MobileNum',user.number as String, Icons.mobile_screen_share),
+                                _tile('Email', user.email as String,Icons.email),
+                                _tile('Blood Type', user.bloodType as String, Icons.bloodtype),
+                                _tile('DoctorID', user.doctorId as String, Icons.bloodtype),
                                 Container(
                                   margin: const EdgeInsets.all(30.0),
                                   width: double.infinity,

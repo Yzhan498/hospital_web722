@@ -34,7 +34,7 @@ class _ListRecordState extends State<ListRecord> {
                 return const Center(child: Text('Loading...'));
               }
               return snapshot.data!.isEmpty
-                  ? const Center(child: Text('No Groceries in List.'))
+                  ? const Center(child: Text('No Records for the patient.'))
                   :ListView(
                 children: snapshot.data!.map((user) {
                   return Center(
@@ -44,6 +44,7 @@ class _ListRecordState extends State<ListRecord> {
                           'Name:John',
                           style: TextStyle(
                             fontSize: 26,
+                            fontWeight: FontWeight.w500,
                             color: Colors.black,
                           ),
                         ),
@@ -92,41 +93,13 @@ class _ListRecordState extends State<ListRecord> {
               );
 
             }),
-        // child: ListView(
-
-          // children: [
-          //   _tile('Name', 'John',Icons.person),
-          //   _tile('Heart Heat Beat', '135/min',Icons.heart_broken),
-          //   _tile('Oxygen Level', '120/80 ml', Icons.hearing),
-          //   _tile('Respire Rate', '25/min',Icons.air),
-          //   _tile('Blood Pressure', '10/8O', Icons.bloodtype),
-          //   Container(
-          //     margin: const EdgeInsets.all(30.0),
-          //     width: double.infinity,
-          //     decoration: BoxDecoration(
-          //       color: Colors.blue,
-          //       borderRadius: BorderRadius.circular(30.0),
-          //     ),
-          //     child: FilledButton(
-          //       child: const Text(
-          //         'Add Record',
-          //         style: TextStyle(color: Colors.white),
-          //       ),
-          //       onPressed: () {
-          //         Navigator.push(context,
-          //             MaterialPageRoute(builder:(_) => const AddRecord(title: 'AddRecord',)));
-          //       },
-          //     ),
-          //   ),
-          // ],
-        // ),
-
       ),
-
+      floatingActionButton: _buildFab(),
     );
   }
 
 }
+
 ListTile _tile(String title, String subtitle, IconData icon) {
   return ListTile(
     title: Text(title,
@@ -142,3 +115,23 @@ ListTile _tile(String title, String subtitle, IconData icon) {
   );
 }
 
+_buildFab() {
+  bool visibilityFlag = true;
+  double max;
+  double currentScroll;
+
+  if (_scrollController.hasClients) {
+    //visibilityFlag = true;
+
+    max = _scrollController.position.maxScrollExtent;
+    double min = _scrollController.position.minScrollExtent;
+    currentScroll = _scrollController.position.pixels;
+
+    if ((min == currentScroll) &&
+        (_scrollController.position.userScrollDirection ==
+            ScrollDirection.idle)) {
+      visibilityFlag = true;
+    } else if (max == currentScroll) {
+      visibilityFlag = false;
+    }
+  }
