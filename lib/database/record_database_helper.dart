@@ -27,17 +27,10 @@ class RecordDatabaseHelper {
 
   static Future<List<RecordModel>> getCriticalRecords() async {
     var database = await DatabaseHelper.instance.database;
-    List<Map> list = await database!.rawQuery('SELECT * FROM $tableName');
-
+    List<Map> list = await database!.rawQuery('SELECT * FROM $tableName WHERE bloodPressure < 60');
     List<RecordModel> records = [];
-
     for (var element in list) {
       var record = RecordModel.fromMap(element);
-      //  if(int.parse(record.bloodPressure)< 60)
-      //  {
-      //   print(record.respireRate);
-      //   //records.add(record);
-      // }
       records.add(record);
     }
     await Future.delayed(const Duration(seconds: 2));
