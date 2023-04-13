@@ -40,6 +40,8 @@ dependencies:
   toast: ^0.3.0
   fluttertoast: ^8.2.1
   email_validator: ^2.1.16
+  shared_preferences: ^2.1.0
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:

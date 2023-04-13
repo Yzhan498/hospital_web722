@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:mobileweb_hospitalapp/screens/listRecord.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/RecordModel.dart';
 import '../comm/comHelper.dart';
+import 'dart:core';
+
 import '../database/record_database_helper.dart';
+import 'listRecord.dart';
 
-void addNewPatient() {
+void editRecord() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp( const AddRecord(title: "Add A New Record"));
+  runApp( const EditRecord(title: "Edit Record"));
 }
-
-class AddRecord extends StatefulWidget {
-  static String routeName="/listPatient";
-  const AddRecord({super.key,required this.title});
+class EditRecord extends StatefulWidget {
+  const EditRecord({super.key,required this.title});
   final String title;
   @override
-  State<AddRecord> createState() => _AddRecordState();
+  State<EditRecord> createState() => _EditRecordState();
 }
 
-class _AddRecordState extends State<AddRecord>{
-
+class _EditRecordState extends State<EditRecord> {
+  int recordID=0;
   int patientId=0;
-  String patientName='';
+
   @override
   void initState(){
     super.initState();
@@ -30,41 +30,34 @@ class _AddRecordState extends State<AddRecord>{
   init() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      patientId = preferences.getInt('id')!;
-      patientName = preferences.getString('patientName')!;
+      recordID = preferences.getInt('recordId')!;
+      patientId = preferences.getInt('patientId')!;
     });
-
   }
-  final _formKey = GlobalKey<FormState>();
 
   final textControllerHeartBeat = TextEditingController();
   final textControllerOxygenLevel = TextEditingController();
   final textControllerRespireRate = TextEditingController();
   final textControllerBloodPressure = TextEditingController();
 
-  addRecord() async {
-      final form=_formKey.currentState;
-      if ((form?.validate()==true)) {
-        _formKey.currentState?.save();
-        RecordModel  uModel= RecordModel(patientId:patientId,heartBeat: textControllerHeartBeat.text, oxygenLevel: textControllerOxygenLevel.text, respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text);
-        RecordDatabaseHelper.createRecord(uModel);
-        alertDialog(context, 'Successfully Saved');
-        Navigator.push(context,
-            MaterialPageRoute(builder:(_) => const ListRecord(title: 'List Records',)));
-      } else {
-        alertDialog(context, 'Add failed');
-      }
+  editRecord() async {
+    RecordModel uModel = RecordModel(recordId:recordID,patientId:patientId,heartBeat: textControllerHeartBeat.text,oxygenLevel: textControllerOxygenLevel.text,respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text
+     );
+    RecordDatabaseHelper.updateRecord(uModel);
+    alertDialog(context, 'Successfully Saved');
+    Navigator.push(context,
+        MaterialPageRoute(
+            builder: (_) => const ListRecord(title: 'List Record',)));
   }
-
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Record'),
+        title: const Text('Edit Record'),
       ),
       body: Form(
-        key: _formKey,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Center(
@@ -72,12 +65,6 @@ class _AddRecordState extends State<AddRecord>{
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 50.0),
-                const Text(
-                    'Record',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20.0),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
@@ -158,11 +145,11 @@ class _AddRecordState extends State<AddRecord>{
                   ),
                   child: FilledButton(
                     child: const Text(
-                      'Add Record',
+                      'Submit',
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
-                      addRecord();
+                      editRecord();
                     },
                   ),
                 ),
@@ -174,3 +161,4 @@ class _AddRecordState extends State<AddRecord>{
     );
   }
 }
+

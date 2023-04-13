@@ -1,9 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/Model/PatientModel.dart';
+import 'package:mobileweb_hospitalapp/screens/addNewPatient.dart';
 import 'package:mobileweb_hospitalapp/screens/listRecord.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../database/patient_database_helper.dart';
+import 'editPatient.dart';
 
 class ListPatients extends StatefulWidget {
   const ListPatients({super.key,required this.title});
@@ -12,7 +15,21 @@ class ListPatients extends StatefulWidget {
   @override
   State<ListPatients> createState() => _ListPatientsState();
 }
+
+
+
 class _ListPatientsState extends State<ListPatients> {
+
+  listPatient() {
+    Navigator.push(context,
+        MaterialPageRoute(builder:(_) => const ListRecord(title: 'ListRecord',)));
+  }
+
+  reload(){
+    Navigator.push(context,
+        MaterialPageRoute(builder:(_) => const ListPatients(title: 'List Patients',)));
+  }
+  int selectedId=0;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +53,7 @@ class _ListPatientsState extends State<ListPatients> {
                 children: snapshot.data!.map((user) {
                   return Center(
                     child: Card(
+
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -45,28 +63,70 @@ class _ListPatientsState extends State<ListPatients> {
                         Column(
                               children: [
                                 _tile('Name', user.name as String,Icons.person),
+
                                 _tile('Address', user.address as String, Icons.home),
                                 _tile('Age', user.age as String,Icons.person),
                                 _tile('MobileNum',user.number as String, Icons.mobile_screen_share),
                                 _tile('Email', user.email as String,Icons.email),
                                 _tile('Blood Type', user.bloodType as String, Icons.bloodtype),
                                 _tile('DoctorID', user.doctorId as String, Icons.bloodtype),
-                                Container(
-                                  margin: const EdgeInsets.all(30.0),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  child: FilledButton(
-                                    child: const Text(
-                                      'List Record',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder:(_) => const ListRecord(title: 'ListRecord',)));
-                                    },
+                                Center(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.fromLTRB(30, 10, 10, 12),
+                                        child: FilledButton(
+                                          child: const Icon(
+                                            Icons.edit
+                                          ),
+
+                                          onPressed: ()async {
+                                            int? selectId=user.id;
+                                            SharedPreferences preferences= await SharedPreferences.getInstance();
+                                            preferences.setInt('id',selectId!);
+                                            preferences.setString('patientName', user.name.toString());
+                                            preferences.setString('patientAddress', user.address.toString());
+                                            preferences.setString('patientMobileNum', user.number.toString());
+                                            preferences.setString('patientEmail', user.email.toString());
+                                            preferences.setString('patientBloodType', user.bloodType.toString());
+                                            preferences.setString('patientDoctorID', user.doctorId.toString());
+                                            editPatient();
+
+                                          },
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.fromLTRB(12, 10, 10, 12),
+                                        child: FilledButton(
+                                          child: const Icon(
+                                              Icons.delete
+                                          ),
+
+                                          onPressed: ()async {
+                                            selectedId=user.id!;
+                                            await PatientDatabaseHelper.deletePatient(selectedId);
+                                            reload();
+                                          },
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.fromLTRB(12, 10, 10, 10),
+                                        child: FilledButton(
+                                          child: Text(
+                                            'List ${user.name} Records',
+                                            style: const TextStyle(color: Colors.white),
+                                          ),
+                                          onPressed: () async {
+                                            //listPatient();
+                                            int? selectId=user.id;
+                                            SharedPreferences preferences= await SharedPreferences.getInstance();
+                                            preferences.setInt('id',selectId!);
+                                            preferences.setString('patientName', user.name.toString());
+                                            listPatient();
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -78,8 +138,20 @@ class _ListPatientsState extends State<ListPatients> {
               );
             }),
       ),
+    floatingActionButton: FloatingActionButton(
+    onPressed: () {
+    Navigator.push(context,
+    MaterialPageRoute(builder:(_) => const AddNewPatient(title: 'Add New Patient',)));
+    },
+    backgroundColor: Colors.blue,
+    child: const Icon(Icons.add),
 
-    );
+    ));
+  }
+
+  void editPatient() {
+    Navigator.push(context,
+        MaterialPageRoute(builder:(_) => const EditPatient(title: 'Edit Patient',)));
   }
 
 }

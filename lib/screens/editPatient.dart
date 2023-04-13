@@ -2,25 +2,43 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/database/patient_database_helper.dart';
 import 'package:mobileweb_hospitalapp/screens/listPatients.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/PatientModel.dart';
 import '../comm/comHelper.dart';
 import 'dart:core';
 
-void addNewPatient() {
+void editPatient() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp( const AddNewPatient(title: "Add New Patient"));
+  runApp( const EditPatient(title: "Edit Patient"));
 }
-class AddNewPatient extends StatefulWidget {
-  const AddNewPatient({super.key,required this.title});
+class EditPatient extends StatefulWidget {
+  const EditPatient({super.key,required this.title});
   final String title;
   @override
-  State<AddNewPatient> createState() => _AddNewPatientState();
+  State<EditPatient> createState() => _EditPatientState();
 }
 
-class _AddNewPatientState extends State<AddNewPatient> {
+class _EditPatientState extends State<EditPatient> {
+  int patientId=0;
+  String patientName='';
+  String patientAddress='';
+  String patientMobileNum='';
+  String patientEmail='';
+  String patientBlood='';
+  String patientDoctorID='';
+  @override
+  void initState(){
+    super.initState();
+    init();
+  }
+  init() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      patientId = preferences.getInt('id')!;
+      patientName = preferences.getString('patientName')!;
+    });
+  }
 
-  final _formKey = GlobalKey<FormState>();
-  int? selectedId;
   final textControllerName = TextEditingController();
   final textControllerEmail = TextEditingController();
   final textControllerNumber = TextEditingController();
@@ -28,37 +46,33 @@ class _AddNewPatientState extends State<AddNewPatient> {
   final textControllerAge = TextEditingController();
   final textControllerAddress = TextEditingController();
   final textControllerDoctorId = TextEditingController();
-  var dbHelper;
 
-  @override
-  void initState(){
-    super.initState();
-    dbHelper= PatientDatabaseHelper;
-  }
-  addNewPatient() async {
-    final form=_formKey.currentState;
-    if ((form?.validate()==true)) {
-      _formKey.currentState?.save();
-      PatientModel  uModel= PatientModel(name: textControllerName.text, email: textControllerEmail.text, number: textControllerNumber.text,bloodType: textControllerBloodType.text,age: textControllerAge.text,address:textControllerAddress.text,doctorId: textControllerDoctorId.text);
-      PatientDatabaseHelper.createPatient(uModel);
+  editPatient() async {
+      PatientModel uModel = PatientModel(id:patientId,name: textControllerName.text,
+          email: textControllerEmail.text,
+          number: textControllerNumber.text,
+          bloodType: textControllerBloodType.text,
+          age: textControllerAge.text,
+          address: textControllerAddress.text,
+          doctorId: textControllerDoctorId.text);
+      PatientDatabaseHelper.updatePatient(uModel);
       alertDialog(context, 'Successfully Saved');
       Navigator.push(context,
-          MaterialPageRoute(builder:(_) => const ListPatients(title: 'List Patients',)));
-    } else {
-      alertDialog(context, 'Submit failed');
-    }
+          MaterialPageRoute(
+              builder: (_) => const ListPatients(title: 'List Patients',)));
   }
-
 
   @override
   Widget build(BuildContext context) {
-
+    textControllerName.text=patientName.toString();
+    textControllerAddress.text=patientAddress.toString();
+    textControllerBloodType.text=patientBlood.toString();
+    textControllerEmail.text=patientEmail.toString();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Patient'),
+        title: const Text('Edit Patient'),
       ),
       body: Form(
-        key: _formKey,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Center(
@@ -70,8 +84,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
-                    validator: (val) => val?.isEmpty== true ? 'Please Enter Patient Name':null,
-                    onSaved: (val)=> textControllerName.text=val!,
+
                     controller: textControllerName,
                     decoration: const InputDecoration(
                       enabledBorder: OutlineInputBorder(
@@ -88,17 +101,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
-                    validator: (val) {
-                      if(val== null || val.isEmpty) {
-                        return 'Please Enter Your Email';
-                      }
-                      if(!EmailValidator.validate(textControllerEmail.text)){
-                        return 'Please Enter Your Valid Email';
-                      }
-                      return null;
-                    },
-                    onSaved: (val)=> textControllerEmail.text=val!,
-                    keyboardType: TextInputType.emailAddress,
+
                     controller: textControllerEmail,
                     decoration: const InputDecoration(
                         enabledBorder: OutlineInputBorder(
@@ -132,8 +135,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
-                    validator: (val) => val?.isEmpty== true ? 'Please Enter Your Blood Type':null,
-                    onSaved: (val)=> textControllerBloodType.text=val!,
+
                     controller: textControllerBloodType,
                     decoration: const InputDecoration(
                         enabledBorder: OutlineInputBorder(
@@ -166,8 +168,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   margin: const EdgeInsets.only(top: 20.0),
                   child: TextFormField(
-                    validator: (val) => val?.isEmpty== true ? 'Please Enter Your Address':null,
-                    onSaved: (val)=> textControllerAddress.text=val!,
+
                     controller: textControllerAddress,
                     decoration: const InputDecoration(
                         enabledBorder: OutlineInputBorder(
@@ -210,7 +211,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
-                      addNewPatient();
+                      editPatient();
                     },
                   ),
                 ),

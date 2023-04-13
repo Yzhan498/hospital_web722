@@ -1,16 +1,17 @@
 class RecordModel {
 int? recordId;
+int ? patientId;
 String ? heartBeat;
 String ? oxygenLevel;
 String ? respireRate;
-String ? bloodPressure;
+String  bloodPressure='56';
 
-  RecordModel({this.recordId,required this.heartBeat,required this.oxygenLevel,
-    required this.respireRate,required this.bloodPressure});
+  RecordModel({this.recordId,this.patientId,this.heartBeat,this.oxygenLevel,this.respireRate,required this.bloodPressure});
 
 Map<String, dynamic> toMap() {
   var map = < String,dynamic >{};
-  map["id"] = recordId;
+  map["recordId"] = recordId;
+  map["patientId"]=patientId;
   map["heartBeat"] = heartBeat;
   map["oxygenLevel"] = oxygenLevel;
   map["respireRate"] = respireRate;
@@ -20,7 +21,8 @@ Map<String, dynamic> toMap() {
 
 
 RecordModel.fromMap(Map<dynamic, dynamic> map) {
-  recordId = map['id'];
+  recordId = map['recordId'];
+  patientId=map['patientId'];
   heartBeat = map['heartBeat'];
   oxygenLevel = map['oxygenLevel'];
   respireRate = map['respireRate'];

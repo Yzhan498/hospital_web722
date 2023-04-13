@@ -27,11 +27,11 @@ class PatientDatabaseHelper {
 
   static Future<void> updatePatient(PatientModel patient) async {
     var database = await DatabaseHelper.instance.database;
-    await database!.update(tableName, patient.toMap(), where: 'patientId = ?', whereArgs: [patient.patientId],);
+    await database!.update(tableName, patient.toMap(), where: 'id = ?', whereArgs: [patient.id],);
   }
 
-  static Future<void> deleteUser(int id) async {
+  static Future<void> deletePatient(int id) async {
     var database = await DatabaseHelper.instance.database;
-    await database!.delete(tableName, where: 'patientId = ?', whereArgs: [id],);
+    await database!.delete(tableName, where: 'id = ?', whereArgs: [id],);
   }
 }

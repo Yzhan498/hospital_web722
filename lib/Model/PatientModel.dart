@@ -1,5 +1,5 @@
 class PatientModel {
-  int ? patientId;
+  int ? id;
   String ? name;
   String ? email;
   String ? number;
@@ -8,11 +8,11 @@ class PatientModel {
   String ? address;
   String ? doctorId;
 
-  PatientModel({this.patientId,this.name,this.email,this.number,this.bloodType,this.age,this.address,this.doctorId});
+  PatientModel({this.id,this.name,this.email,this.number,this.bloodType,this.age,this.address,this.doctorId});
 
   Map<String, dynamic> toMap() {
     var map = < String,dynamic >{};
-    map["id"] = patientId;
+    map["id"] = id;
     map["name"] = name;
     map["email"] = email;
     map["number"] = number;
@@ -24,7 +24,7 @@ class PatientModel {
   }
 
   PatientModel.fromMap(Map<dynamic, dynamic> map) {
-    patientId = map['id'];
+    id = map['id'];
     name = map['name'];
     email = map['email'];
     number = map['number'];

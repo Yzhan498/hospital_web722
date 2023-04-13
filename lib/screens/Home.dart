@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/screens/addNewPatient.dart';
-import 'package:mobileweb_hospitalapp/screens/searchPatient.dart';
 import 'HomeDrawer.dart';
+import 'listAllRecords.dart';
 import 'listPatients.dart';
 
 class Home extends StatelessWidget {
@@ -71,12 +71,13 @@ class Home extends StatelessWidget {
                 ),
                 child: FilledButton(
                   child: const Text(
-                    'Search Patient',
+                    'List All Records',
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder:(_) => const SearchPatient(title: 'Search Patient',)));
+                        MaterialPageRoute(builder:(_) => const ListAllRecords(title: 'List All Records',)));
+
                   },
                 ),
               ),
