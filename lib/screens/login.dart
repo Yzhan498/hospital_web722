@@ -33,7 +33,7 @@ class _LoginState extends State<Login> {
           userData) {
         if (userData != null) {
           Navigator.pushAndRemoveUntil(context,
-              MaterialPageRoute(builder: (_) => const Home(title: 'Home',)),
+              MaterialPageRoute(builder: (_) => const Home()),
                   (Route<dynamic> route) => false);
         } else {
           alertDialog(context, "Error:User Not found");

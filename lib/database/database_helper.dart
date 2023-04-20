@@ -49,6 +49,7 @@ class DatabaseHelper {
         "CREATE TABLE patientRecord("
             "recordId INTEGER PRIMARY KEY,"
             "patientId Integer,"
+            "patientName TEXT,"
             "heartBeat  TEXT,"
             "oxygenLevel TEXT,"
             "respireRate TEXT,"

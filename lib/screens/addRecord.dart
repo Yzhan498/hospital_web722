@@ -4,10 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/RecordModel.dart';
 import '../comm/comHelper.dart';
 import '../database/record_database_helper.dart';
+import 'HomeDrawer.dart';
 
 void addNewPatient() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp( const AddRecord(title: "Add A New Record"));
+
 }
 
 class AddRecord extends StatefulWidget {
@@ -46,7 +48,7 @@ class _AddRecordState extends State<AddRecord>{
       final form=_formKey.currentState;
       if ((form?.validate()==true)) {
         _formKey.currentState?.save();
-        RecordModel  uModel= RecordModel(patientId:patientId,heartBeat: textControllerHeartBeat.text, oxygenLevel: textControllerOxygenLevel.text, respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text);
+        RecordModel  uModel= RecordModel(patientId:patientId,patientName:patientName,heartBeat: textControllerHeartBeat.text, oxygenLevel: textControllerOxygenLevel.text, respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text);
         RecordDatabaseHelper.createRecord(uModel);
         alertDialog(context, 'Successfully Saved');
         Navigator.push(context,
@@ -63,6 +65,7 @@ class _AddRecordState extends State<AddRecord>{
       appBar: AppBar(
         title: const Text('Add Record'),
       ),
+      endDrawer: const MainDrawer(),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -72,10 +75,16 @@ class _AddRecordState extends State<AddRecord>{
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 50.0),
-                const Text(
-                    'Record',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+
+                    Text('$patientName   Record',
+
+                      style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+                    ),
+                   ],
                 ),
                 const SizedBox(height: 20.0),
                 Container(

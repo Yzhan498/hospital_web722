@@ -1,12 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/Model/PatientModel.dart';
 import 'package:mobileweb_hospitalapp/screens/addNewPatient.dart';
-import 'package:mobileweb_hospitalapp/screens/listRecord.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../database/patient_database_helper.dart';
-import 'editPatient.dart';
+import 'HomeDrawer.dart';
+import 'listPatientDetail.dart';
 
 class ListPatients extends StatefulWidget {
   const ListPatients({super.key,required this.title});
@@ -16,21 +13,22 @@ class ListPatients extends StatefulWidget {
   State<ListPatients> createState() => _ListPatientsState();
 }
 
-
-
 class _ListPatientsState extends State<ListPatients> {
-
-  listPatient() {
-    Navigator.push(context,
-        MaterialPageRoute(builder:(_) => const ListRecord(title: 'ListRecord',)));
-  }
-
-  reload(){
-    Navigator.push(context,
-        MaterialPageRoute(builder:(_) => const ListPatients(title: 'List Patients',)));
+  static int patientId =patientId;
+  static String patientName=patientName;
+  static String patientAddress=patientAddress;
+  static String age=age;
+  static String number=number;
+  static String patientEmail=patientEmail;
+  static String bloodType=bloodType;
+  static String doctorID=doctorID;
+  void selectedPatient(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      return  ListPatientDetail(patientId,patientName,patientAddress,age,number,
+          patientEmail,bloodType,doctorID);
+    }));
   }
   int selectedId=0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +37,7 @@ class _ListPatientsState extends State<ListPatients> {
         // the App.build method, and use it to set our appbar title.
         title: const Text('List Patients'),
       ),
+        endDrawer: const MainDrawer(),
       body: Center(
         child: FutureBuilder<List<PatientModel>>(
             future: PatientDatabaseHelper.getPatients(),
@@ -52,89 +51,33 @@ class _ListPatientsState extends State<ListPatients> {
                   :ListView(
                 children: snapshot.data!.map((user) {
                   return Center(
-                    child: Card(
-
+                    child:
+                    Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      elevation: 4,
-                      margin: const EdgeInsets.all(10),
+                      elevation: 2,
+                      margin: const EdgeInsets.all(5),
                       child: Column(children: [
-                        Column(
-                              children: [
-                                _tile('Name', user.name as String,Icons.person),
-
-                                _tile('Address', user.address as String, Icons.home),
-                                _tile('Age', user.age as String,Icons.person),
-                                _tile('MobileNum',user.number as String, Icons.mobile_screen_share),
-                                _tile('Email', user.email as String,Icons.email),
-                                _tile('Blood Type', user.bloodType as String, Icons.bloodtype),
-                                _tile('DoctorID', user.doctorId as String, Icons.bloodtype),
-                                Center(
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.fromLTRB(30, 10, 10, 12),
-                                        child: FilledButton(
-                                          child: const Icon(
-                                            Icons.edit
-                                          ),
-
-                                          onPressed: ()async {
-                                            int? selectId=user.id;
-                                            SharedPreferences preferences= await SharedPreferences.getInstance();
-                                            preferences.setInt('id',selectId!);
-                                            preferences.setString('patientName', user.name.toString());
-                                            preferences.setString('patientAddress', user.address.toString());
-                                            preferences.setString('patientMobileNum', user.number.toString());
-                                            preferences.setString('patientEmail', user.email.toString());
-                                            preferences.setString('patientBloodType', user.bloodType.toString());
-                                            preferences.setString('patientDoctorID', user.doctorId.toString());
-                                            editPatient();
-
-                                          },
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: const EdgeInsets.fromLTRB(12, 10, 10, 12),
-                                        child: FilledButton(
-                                          child: const Icon(
-                                              Icons.delete
-                                          ),
-
-                                          onPressed: ()async {
-                                            selectedId=user.id!;
-                                            await PatientDatabaseHelper.deletePatient(selectedId);
-                                            reload();
-                                          },
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: const EdgeInsets.fromLTRB(12, 10, 10, 10),
-                                        child: FilledButton(
-                                          child: Text(
-                                            'List ${user.name} Records',
-                                            style: const TextStyle(color: Colors.white),
-                                          ),
-                                          onPressed: () async {
-                                            //listPatient();
-                                            int? selectId=user.id;
-                                            SharedPreferences preferences= await SharedPreferences.getInstance();
-                                            preferences.setInt('id',selectId!);
-                                            preferences.setString('patientName', user.name.toString());
-                                            listPatient();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                        InkWell(
+                                onTap: () => {
+                                  patientId=user.id!,
+                                  patientName=user.name!,
+                                  patientEmail=user.email!,
+                                  patientAddress=user.address!,
+                                  age=user.age!,
+                                  number=user.number!,
+                                  bloodType=user.bloodType!,
+                                  doctorID=user.doctorId!,
+                            selectedPatient(context)
+                                },
+                          child:
+                                _tile(user.name as String,user.email as String,Icons.chevron_right),
                         )
-                      ]),
-                    ),
-                  );
-                }).toList(),
+                    ]),
+                   ),
+                   );
+                 }).toList(),
               );
             }),
       ),
@@ -149,11 +92,6 @@ class _ListPatientsState extends State<ListPatients> {
     ));
   }
 
-  void editPatient() {
-    Navigator.push(context,
-        MaterialPageRoute(builder:(_) => const EditPatient(title: 'Edit Patient',)));
-  }
-
 }
 ListTile _tile(String title, String subtitle, IconData icon) {
   return ListTile(
@@ -163,7 +101,7 @@ ListTile _tile(String title, String subtitle, IconData icon) {
           fontSize: 20,
         )),
     subtitle: Text(subtitle),
-    leading: Icon(
+    trailing: Icon(
       icon,
       color: Colors.blue[500],
     ),

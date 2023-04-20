@@ -1,5 +1,3 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:mobileweb_hospitalapp/Model/RecordModel.dart';
 import 'database_helper.dart';
 
@@ -58,6 +56,6 @@ class RecordDatabaseHelper {
 
   static Future<void> deleteRecord(int id) async {
     var database = await DatabaseHelper.instance.database;
-    await database!.delete(tableName, where: 'id = ?', whereArgs: [id],);
+    await database!.delete(tableName, where: 'recordId = ?', whereArgs: [id],);
   }
 }

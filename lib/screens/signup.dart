@@ -48,7 +48,7 @@ class _SignupState extends State<Signup>{
           UserDatabaseHelper.createUser(uModel);
           alertDialog(context, 'Successfully Saved');
           Navigator.push(context,
-              MaterialPageRoute(builder:(_) => const Home(title: 'WeCare',)));
+              MaterialPageRoute(builder:(_) => const Home()));
         }
     }
   }

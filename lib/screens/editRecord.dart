@@ -21,6 +21,7 @@ class EditRecord extends StatefulWidget {
 class _EditRecordState extends State<EditRecord> {
   int recordID=0;
   int patientId=0;
+  String patientName='';
 
   @override
   void initState(){
@@ -32,6 +33,7 @@ class _EditRecordState extends State<EditRecord> {
     setState(() {
       recordID = preferences.getInt('recordId')!;
       patientId = preferences.getInt('patientId')!;
+      patientName = preferences.getString('patientName')!;
     });
   }
 
@@ -41,7 +43,7 @@ class _EditRecordState extends State<EditRecord> {
   final textControllerBloodPressure = TextEditingController();
 
   editRecord() async {
-    RecordModel uModel = RecordModel(recordId:recordID,patientId:patientId,heartBeat: textControllerHeartBeat.text,oxygenLevel: textControllerOxygenLevel.text,respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text
+    RecordModel uModel = RecordModel(recordId:recordID,patientName:patientName,heartBeat: textControllerHeartBeat.text,oxygenLevel: textControllerOxygenLevel.text,respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text
      );
     RecordDatabaseHelper.updateRecord(uModel);
     alertDialog(context, 'Successfully Saved');

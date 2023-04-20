@@ -16,7 +16,6 @@ class AllRecord extends StatefulWidget {
   State<AllRecord> createState() => _AllRecordState();
 }
 class _AllRecordState extends State<AllRecord> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,8 +41,7 @@ class _AllRecordState extends State<AllRecord> {
                       children: [
                         const SizedBox(height: 50.0),
                          Text(
-                          'Patient ID: ${user.patientId}',
-
+                          'Patient Name: ${user.patientName}',
                           style: const TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w500,
@@ -60,6 +58,7 @@ class _AllRecordState extends State<AllRecord> {
 
                             Column(
                               children: [
+                                _tile('Patient Name', user.patientName as String,Icons.person),
                                 _tile('Heart Beat', user.heartBeat as String,Icons.heart_broken),
                                 _tile('Oxygen Level', user.oxygenLevel as String, Icons.hearing),
                                 _tile('Respire Rate', user.respireRate as String,Icons.air),

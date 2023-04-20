@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/screens/addNewPatient.dart';
 import 'package:mobileweb_hospitalapp/screens/listPatients.dart';
+import 'package:mobileweb_hospitalapp/screens/listRecord.dart';
+
+import 'listAllRecords.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -50,6 +53,11 @@ class MainDrawer extends StatelessWidget {
           Navigator.push(context,
               MaterialPageRoute(builder:(_) => AddNewPatient(title: 'Add New Patient',)));
 
+        }),
+        buildListTile('List All Records', Icons.list, () {
+          Navigator.push(context,
+              MaterialPageRoute(builder:(_) => const ListAllRecords(title: 'List All Records',)));
+          //Navigator.of(context).pushReplacementNamed('/listPatients');
         }),
       ]),
     );

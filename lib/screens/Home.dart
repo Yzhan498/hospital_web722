@@ -4,18 +4,36 @@ import 'HomeDrawer.dart';
 import 'listAllRecords.dart';
 import 'listPatients.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key,required this.title});
-  final String title;
+class Home extends StatefulWidget {
+  const Home({Key?key}): super(key:key);
+  @override
+   _HomeState createState() => _HomeState();
+}
 
+class _HomeState extends State<Home>{
+
+ PageController pageController=PageController();
+ List<Widget>pages=[const Home(),const ListPatients(title: 'List Patients',),const ListAllRecords(title: 'List All Records',)];
+ int selectIndex=0;
+ void onPageChanged(int index){
+   setState(() {
+     selectIndex=index;
+   });
+ }
+
+void onItemTap(int selectedItems){
+   pageController.jumpToPage(selectedItems);
+ }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
         title: const Text('Home'),
     ),
-      drawer: const MainDrawer(),
-      body: SingleChildScrollView(
+      endDrawer: const MainDrawer(),
+      body:
+
+      SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Center(
           child: Column(
@@ -57,8 +75,7 @@ class Home extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder:(_) => AddNewPatient(title: 'Add New Patient',)));
-
+                        MaterialPageRoute(builder:(_) => const AddNewPatient(title: 'Add New Patient',)));
                   },
                 ),
               ),
@@ -77,7 +94,6 @@ class Home extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder:(_) => const ListAllRecords(title: 'List All Records',)));
-
                   },
                 ),
               ),
