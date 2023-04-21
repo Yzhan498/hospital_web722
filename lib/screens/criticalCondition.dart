@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobileweb_hospitalapp/database/database_helper.dart';
 import 'package:mobileweb_hospitalapp/screens/listRecord.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
 import '../Model/PatientModel.dart';
 import '../Model/RecordModel.dart';
 import '../database/record_database_helper.dart';
@@ -16,6 +16,7 @@ class CriticalCondition extends StatefulWidget {
   @override
   State<CriticalCondition> createState() => _CriticalConditionState();
 }
+
 class _CriticalConditionState extends State<CriticalCondition> {
 
   @override
@@ -57,7 +58,7 @@ class _CriticalConditionState extends State<CriticalCondition> {
                                 _tile('Heart Beat', user.heartBeat as String,Icons.heart_broken),
                                 _tile('Oxygen Level', user.oxygenLevel as String, Icons.hearing),
                                 _tile('Respire Rate', user.respireRate as String,Icons.air),
-                                _tile('Blood Pressure', user.bloodPressure as String, Icons.bloodtype),
+                                _tile('Blood Pressure', user.bloodPressure, Icons.bloodtype),
                               ],
                             ),
                           ]),

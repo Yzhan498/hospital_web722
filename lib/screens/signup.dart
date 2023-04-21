@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../Model/UserModel.dart';
 import 'package:email_validator/email_validator.dart';
@@ -5,6 +7,7 @@ import '../comm/comHelper.dart';
 import 'dart:core';
 import '../database/user_database_helper.dart';
 import 'Home.dart';
+import 'package:http/http.dart' as http;
 
 void signup() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +40,9 @@ class _SignupState extends State<Signup>{
     super.initState();
     dbHelper= UserDatabaseHelper;
   }
-  signUp(){
+  signUp() async {
+
+
     final form=_formKey.currentState;
     if(form?.validate()==true){
         if(textControllerPassword.text!=textControllerComPassword.text){

@@ -4,6 +4,7 @@ import '../Model/RecordModel.dart';
 import '../database/record_database_helper.dart';
 import 'HomeDrawer.dart';
 import 'listRecordDetail.dart';
+import 'package:http/http.dart' as http;
 
 class ListAllRecords extends StatefulWidget {
   const ListAllRecords({super.key,required this.title});
@@ -13,6 +14,16 @@ class ListAllRecords extends StatefulWidget {
   State<ListAllRecords> createState() => _ListAllRecordsState();
 }
 class _ListAllRecordsState extends State<ListAllRecords> {
+
+  Future<void> postData() async {
+    final response = await http.post(Uri.parse('http://localhost:3000/patients'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          "Accept": "application/json",
+        },
+        body: Center);
+    print(response.body);
+  }
   static int recordId =recordId;
   static String patientName=patientName;
   static String heartBeat=heartBeat;
@@ -92,6 +103,7 @@ class _ListAllRecordsState extends State<ListAllRecords> {
       floatingActionButton: FloatingActionButton(
 
           onPressed: () {
+            postData();
             Navigator.push(context,
                 MaterialPageRoute(builder:(_) => const CriticalCondition(title: 'Critical Condition',)));
         },

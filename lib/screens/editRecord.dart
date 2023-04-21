@@ -43,7 +43,7 @@ class _EditRecordState extends State<EditRecord> {
   final textControllerBloodPressure = TextEditingController();
 
   editRecord() async {
-    RecordModel uModel = RecordModel(recordId:recordID,patientName:patientName,heartBeat: textControllerHeartBeat.text,oxygenLevel: textControllerOxygenLevel.text,respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text
+    RecordModel uModel = RecordModel(recordId:recordID,patientId:patientId,patientName:patientName,heartBeat: textControllerHeartBeat.text,oxygenLevel: textControllerOxygenLevel.text,respireRate: textControllerRespireRate.text,bloodPressure: textControllerBloodPressure.text
      );
     RecordDatabaseHelper.updateRecord(uModel);
     alertDialog(context, 'Successfully Saved');
